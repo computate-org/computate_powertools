@@ -1,0 +1,25 @@
+---
+- name: "Install dependencies as root: {{ APP_DEPENDENCIES | join(' ') }}"
+  package:
+    name: "{{ APP_DEPENDENCIES }}"
+  become: true
+  register: INSTALL_DEPENDENCIES
+  ignore_errors: true
+- name: "Install dependencies as user: {{ APP_DEPENDENCIES | join(' ') }}"
+  shell: "pkcon install -y {{ item }} | true"
+  loop: "{{ APP_DEPENDENCIES }}"
+  when: INSTALL_DEPENDENCIES.failed
+- name: "Install RHEL8 codeready"
+  shell: "subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms"
+  become: true
+  when: ansible_distribution == 'RedHat'
+- name: "Enable powertools repo as root"
+  shell: "yum-config-manager --enable powertools"
+  ignore_errors: true
+  become: true
+  register: ENABLE_POWERTOOLS
+  when: ansible_distribution != 'RedHat'
+- name: "Enable powertools repo as user"
+  shell: "pkcon repo-enable powertools"
+  ignore_errors: true
+  when: ansible_distribution != 'RedHat' and ENABLE_POWERTOOLS is defined and ENABLE_POWERTOOLS.failed
