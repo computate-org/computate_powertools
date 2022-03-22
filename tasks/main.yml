@@ -13,6 +13,7 @@
   shell: "subscription-manager repos --enable codeready-builder-for-rhel-8-x86_64-rpms"
   become: true
   when: ansible_distribution == 'RedHat'
+  ignore_errors: true
 - name: "Enable powertools repo as root"
   shell: "yum-config-manager --enable powertools"
   ignore_errors: true
