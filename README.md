@@ -13,6 +13,6 @@ cd ~/.ansible/roles/computate.computate_powertools
 # Run the powertools ansible playbook to install powertools locally. 
 
 ```bash
-ansible-playbook install.yml
+ansible-playbook install.yml -K
 ```
 
